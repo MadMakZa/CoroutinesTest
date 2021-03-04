@@ -20,32 +20,26 @@ class MainActivity : AppCompatActivity() {
         textView = findViewById(R.id.textView)
 
 
-        GlobalScope.launch(Dispatchers.IO) {
-            Log.d(TAG, "Atarting coroutine in thread ${Thread.currentThread().name}")
-            val answer = doNetworkCall()
-
-            withContext(Dispatchers.Main){
-                Log.d(TAG, "Atarting coroutine in thread ${Thread.currentThread().name}")
-                textView.text = answer
+        val job = GlobalScope.launch(Dispatchers.Default) {
+                repeat(5){
+                    Log.d(TAG, "Coroutine is still working...")
+                    delay(1000L)
             }
 
-
-
         }
-        Log.d(TAG, "Hello from thread here ${Thread.currentThread().name}")
+
+        runBlocking {
+            delay(2000L)
+            job.cancel()
+            Log.d(TAG, "Main thread continung")
+        }
+
+        
         
 
     }
 
-    suspend fun doNetworkCall(): String{
-        delay(5000L)
-        return "Answer"
-    }
 
-    suspend fun doNetworkCall2(): String{
-        delay(1000L)
-        return "This is answer 2"
-    }
 
 
 }
