@@ -21,22 +21,28 @@ class MainActivity : AppCompatActivity() {
 
 
         val job = GlobalScope.launch(Dispatchers.Default) {
-                repeat(5){
-                    Log.d(TAG, "Coroutine is still working...")
-                    delay(1000L)
+            Log.d(TAG, "Starting long running calculation...")
+            for (i in 30..40){
+                if(isActive) {
+                    Log.d(TAG, "Result for i = $i: ${fib(i)}")
+                }
             }
+
 
         }
 
         runBlocking {
             delay(2000L)
             job.cancel()
-            Log.d(TAG, "Main thread continung")
+            Log.d(TAG, "Canceled job")
         }
 
-        
-        
+    }
 
+    fun fib(n: Int): Long{
+        return if (n == 0) 0
+        else if (n == 1) 1
+        else fib (n - 1) + fib (n - 2)
     }
 
 
