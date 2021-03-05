@@ -7,6 +7,8 @@ import android.util.Log
 import android.widget.TextView
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,30 +21,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         textView = findViewById(R.id.textView)
 
-
-        val job = GlobalScope.launch(Dispatchers.Default) {
-            Log.d(TAG, "Starting long running calculation...")
-            for (i in 30..40){
-                if(isActive) {
-                    Log.d(TAG, "Result for i = $i: ${fib(i)}")
-                }
+        GlobalScope.launch { (Dispatchers.IO)
+            val time = measureTimeMillis {
+                val answer1 = networkCall1()
+                val answer2 = networkCall2()
+                Log.d(TAG, "Answer1 is: $answer1")
+                Log.d(TAG, "Answer2 is: $answer2")
             }
-
-
-        }
-
-        runBlocking {
-            delay(2000L)
-            job.cancel()
-            Log.d(TAG, "Canceled job")
+            Log.d(TAG, "Request took $time ms.")
         }
 
     }
 
-    fun fib(n: Int): Long{
-        return if (n == 0) 0
-        else if (n == 1) 1
-        else fib (n - 1) + fib (n - 2)
+    suspend fun networkCall1(): String {
+        delay(3000L)
+        return "Answer 1"
+    }
+
+    suspend fun networkCall2(): String {
+        delay(3000L)
+        return "Answer 2"
     }
 
 
