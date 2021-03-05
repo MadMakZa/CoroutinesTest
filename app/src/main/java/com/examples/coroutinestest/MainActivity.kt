@@ -23,8 +23,12 @@ class MainActivity : AppCompatActivity() {
 
         GlobalScope.launch { (Dispatchers.IO)
             val time = measureTimeMillis {
-                val answer1 = networkCall1()
-                val answer2 = networkCall2()
+                var answer1: String? = null
+                var answer2: String? = null
+                val job1 = launch { answer1 = networkCall1() }
+                val job2 = launch { answer2 = networkCall2() }
+                job1.join()
+                job2.join()
                 Log.d(TAG, "Answer1 is: $answer1")
                 Log.d(TAG, "Answer2 is: $answer2")
             }
